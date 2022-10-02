@@ -16,7 +16,7 @@ Router.get("/call", async (req, res) => {
   );
   const animalType = twiml
     .record({
-      timeout: 5,
+      timeout: 2,
       transcribe: true,
       action: "/api/type",
       method: "POST",
@@ -82,17 +82,42 @@ Router.get("/call", async (req, res) => {
   //   other_info: animal.other_info || "other",
   // });
 
-  res.writeHead(200, { "Content-Type": "text/xml" });
+  res.type("text/xml");
   res.end(twiml.toString());
 });
 
 Router.post("/type", (req, res) => {
   const twiml = new VoiceResponse();
 
-  console.log(req);
+  console.log(req.body);
 
   twiml.say(
-    "Thank you for your information, One of agent would reach to you soon"
+    `We would like to get more information on this. What is the age of your pet?`
+  );
+
+  const animalAge = twiml
+    .record({
+      timeout: 2,
+      transcribe: true,
+      action: "/api/age",
+      method: "POST",
+      recordingStatusCallback: 10,
+    })
+    .toString()
+    .toUpperCase();
+  console.log(animalAge);
+
+  res.writeHead(200, { "Content-Type": "text/xml" });
+  res.end(twiml.toString());
+});
+
+Router.post("/age", (req, res) => {
+  const twiml = new VoiceResponse();
+
+  console.log(req.body);
+
+  twiml.say(
+    `Thank you for your information, One of agent would reach to you soon.`
   );
 
   res.writeHead(200, { "Content-Type": "text/xml" });
